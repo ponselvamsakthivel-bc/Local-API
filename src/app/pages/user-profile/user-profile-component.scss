@@ -1,0 +1,63 @@
+  .message-notification{
+    width: 479px;
+    height: 50px;
+    left: 32px;
+    top: 669px;
+    /* govuk-Body-19 */
+    font-family: Source Sans Pro;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 19px;
+    line-height: 25px;
+    /* or 132% */
+    /* /Text Primary */
+    color: #0B0C0C;
+}
+
+.secondary-button{
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #DEE0E2 !important;
+  box-shadow: inset 0px -3px 0px rgba(0, 0, 0, 0.448864);
+  border-radius: 3px;
+}
+
+table {
+  width: 50%;
+  max-height: 800px;
+
+  th {
+      font-family: Source Sans Pro;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 19px;
+      line-height: 24px;
+  }
+
+  td {
+      font-family: Source Sans Pro;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 19px;
+      line-height: 25px;
+  }
+}
+
+label{
+  font-family: Source Sans Pro;
+font-style: normal;
+font-weight: 300;
+font-size: 19px;
+line-height: 25px;
+color: #0B0C0C;
+}
+
+input[type=text], input[type=email]{
+background: #FFFFFF;
+border: 1px solid #222222;
+box-sizing: border-box;
+width: 480px;
+height: 40px;
+}

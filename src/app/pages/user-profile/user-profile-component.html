@@ -1,0 +1,50 @@
+<!-- <div class="content flex" [@slide]="(sideNavVisible$ | async) ? 'close' : 'open'"> -->
+    <div class="user-profile-container">
+    <h1>Manage my account</h1>
+    <div class="form">
+    <form class="ui form profile mb-two" [formGroup]="userProfileForm">
+        <div class="ui segment">
+            <div class="field"
+                [class.invalid]="submitted && userProfileForm.controls.firstName.invalid && userProfileForm.controls.firstName.touched">
+                <label>{{ 'FIRSTNAME' | translate }}</label><br>
+                <input name="firstName" type="text" formControlName="firstName" class="mb-half">
+            </div><br>
+            <div class="field"
+                [class.invalid]="submitted && userProfileForm.controls.lastName.invalid && userProfileForm.controls.lastName.touched">
+                <label>{{ 'LASTNAME' | translate }}</label><br>
+                <input name="lastName" type="text" formControlName="lastName" class="mb-half">
+            </div><br>
+            <div class="field"
+                [class.invalid]="submitted && userProfileForm.controls.userName.invalid && userProfileForm.controls.userName.touched">
+                <label>{{ 'EMAIL' | translate }}</label><br>
+                <input readonly  name="userName" type="email" formControlName="userName" class="mb-half">
+            </div><br>
+            <p class="message-notification">
+                It's not possible to change your email address. If you need a new account setup, contact your department
+            </p>
+            <div class="field">
+                <button type="submit" style="width:200px;" class="secondary-button mb-one">{{ 'CHANGE_PASSWORD_BTN' | translate }}</button>
+            </div>
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                <ng-container matColumnDef="role">
+                    <th class="first-column" mat-header-cell *matHeaderCellDef> Roles </th>
+                    <td class="first-column" mat-cell *matCellDef="let userGroup"> {{userGroup.role}} </td>
+                </ng-container>
+                <ng-container matColumnDef="group">
+                    <th mat-header-cell *matHeaderCellDef> Groups </th>
+                    <td mat-cell *matCellDef="let userGroup"> {{userGroup.group}} </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnsToDisplay; sticky: true"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+            </table>
+            <div class="mt-2">
+            <button type="submit" class="mb-one" style="width:200px;">Request role change</button>
+            <button class="secondary-button" style="margin-left: 10px;">
+                <a routerLink="/home">{{ 'CANCEL_BTN' | translate }}</a>
+            </button>
+        </div>
+        </div>
+    </form>
+</div>
+</div>
+<!-- </div> -->

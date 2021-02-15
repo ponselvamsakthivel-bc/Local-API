@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\20210119142331_InitialMigration.sql" />
+    <None Remove="Scripts\Sprint5\20210203053232_DBIdentityColumnChanges.sql" />
+    <None Remove="Scripts\Sprint5\20210203064222_AddLegalNameToOrganisation.sql" />
+    <None Remove="Scripts\Sprint6\20210209124739_AddIndexForCiiOrganisationId.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\20210119142331_InitialMigration.sql" />
+    <EmbeddedResource Include="Scripts\Sprint5\20210203064222_AddLegalNameToOrganisation.sql" />
+    <EmbeddedResource Include="Scripts\Sprint5\20210203053232_DBIdentityColumnChanges.sql" />
+    <EmbeddedResource Include="Scripts\Sprint6\20210209124739_AddIndexForCiiOrganisationId.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CcsSso.Core.DbPersistence\CcsSso.Core.DbPersistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

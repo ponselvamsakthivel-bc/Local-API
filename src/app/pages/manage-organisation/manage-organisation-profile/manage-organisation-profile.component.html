@@ -1,0 +1,101 @@
+<div class="content flex" [@slide]="(sideNavVisible$ | async) ? 'close' : 'open'">
+    <h1>Manage organisation</h1>
+    <div *ngIf="organisation$ | async as i">
+        <p style="margin-top:40px;">
+            <span style="font-weight: 500;">{{ i?.legalName }}</span><br />
+            {{ i?.address?.streetAddress }}<br />
+            {{ i.address?.locality }}<br />
+            {{ i?.address?.region }}<br />
+            {{ i?.address?.postalCode }}<br />
+            {{ i?.address?.countryCode }}<br />
+        </p>
+    </div>
+    <!-- <div>
+        <p>
+            {{ organisationAddress?.streetAddress }}<br />
+            {{ organisationAddress?.locality }}<br />
+            {{ organisationAddress?.region }}<br />
+            {{ organisationAddress?.postalCode }}<br />
+            {{ organisationAddress?.countryCode }}
+        </p>
+    </div> -->
+    <h2>Contact details</h2>
+    <div class="table-container">
+        <table mat-table [dataSource]="contactData" class="table mat-elevation-z8">
+            <ng-container matColumnDef="name">
+                <th class="first-column" mat-header-cell *matHeaderCellDef> Name </th>
+                <td class="first-column" mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef> Email address </th>
+                <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+            </ng-container>
+            <ng-container matColumnDef="teamName">
+                <th mat-header-cell *matHeaderCellDef> Team name </th>
+                <td mat-cell *matCellDef="let element"> {{element.teamName}} </td>
+            </ng-container>
+            <ng-container matColumnDef="phoneNumber">
+                <th mat-header-cell *matHeaderCellDef> Telephone number </th>
+                <td mat-cell *matCellDef="let element"> {{element.phoneNumber}} </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> </th>
+                <td class="last-column" mat-cell *matCellDef="let element">
+                    <a (click)="onContactEditClick($event, element.contactId)">Edit</a>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+    <button class="secondary-button add-contact-button" (click)="onContactAddClick()" style="width:220px;">Add another contact</button>
+    <h2>Sites details</h2>
+    <div class="table-container">
+        <table mat-table [dataSource]="siteData" class="table mat-elevation-z8">
+            <ng-container matColumnDef="name">
+                <th class="first-column" mat-header-cell *matHeaderCellDef> Site name </th>
+                <td class="first-column" mat-cell *matCellDef="let element"> {{element.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="createdDate">
+                <th mat-header-cell *matHeaderCellDef> Data created </th>
+                <td mat-cell *matCellDef="let element"> {{element.createdDate}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> </th>
+                <td class="last-column" mat-cell *matCellDef="let element">
+                    <a (click)="onSiteEditClick($event)">Edit</a>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="siteTableDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: siteTableDisplayedColumns;"></tr>
+        </table>
+    </div>
+    <button class="secondary-button add-contact-button" (click)="onSiteAddClick()">Add a site</button>
+    <h2>Registries</h2>
+    <div class="registry-description">This information is collected through the following registries. To update this information, add or remove registries.</div>
+    <div class="table-container">
+        <table mat-table [dataSource]="registries" class="table mat-elevation-z8">
+            <ng-container matColumnDef="authority">
+                <th class="first-column" mat-header-cell *matHeaderCellDef> Authority </th>
+                <td class="first-column" mat-cell *matCellDef="let element"> {{element.authority}} </td>
+            </ng-container>
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> ID </th>
+                <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef> </th>
+                <td class="last-column" mat-cell *matCellDef="let element">
+                    <a (click)="onRegistryRemoveClick($event)">Remove</a>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="registriesTableDisplayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: registriesTableDisplayedColumns;"></tr>
+        </table>
+    </div>
+    <button class="secondary-button add-contact-button" (click)="onRegistryAddClick()">Add new registry</button>
+    <p style="margin-top:40px;"><strong>If you have previously tried to signup or register (CII registry) and have made a mistake, <a href="/">click here</a> to submit a claim.</strong></p>
+</div>
