@@ -56,7 +56,6 @@ namespace CcsSso.Security.Api
             DBConnectionName = Configuration["Auth0:DBConnectionName"],
             ManagementApiBaseUrl = Configuration["Auth0:ManagementApiBaseUrl"],
             ManagementApiIdentifier = Configuration["Auth0:ManagementApiIdentifier"],
-            UserStore = Configuration["Auth0:UserStore"],
             DefaultDBConnectionId = Configuration["Auth0:DefaultDBConnectionId"]
           },
           AwsCognitoConfigurationInfo = new AwsCognitoConfigurationInfo()

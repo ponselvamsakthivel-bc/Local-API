@@ -23,8 +23,6 @@ namespace CcsSso.Security.Domain.Dtos
 
     public string ManagementApiIdentifier { get; set; }
 
-    public string UserStore { get; set; }
-
     public string DefaultDBConnectionId { get; set; }
   }
 

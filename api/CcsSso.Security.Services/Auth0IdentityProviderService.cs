@@ -97,7 +97,7 @@ namespace CcsSso.Security.Services
           FullName = userInfo.FirstName,
           LastName = userInfo.LastName,
           EmailVerified = false,
-          Connection = _appConfigInfo.Auth0ConfigurationInfo.UserStore
+          Connection = _appConfigInfo.Auth0ConfigurationInfo.DBConnectionName
         };
 
         var managementApiToken = await _tokenHelper.GetAuth0ManagementApiTokenAsync();
@@ -141,7 +141,7 @@ namespace CcsSso.Security.Services
           Email = userInfo.Email,
           FullName = userInfo.FirstName,
           LastName = userInfo.LastName,
-          Connection = _appConfigInfo.Auth0ConfigurationInfo.UserStore
+          Connection = _appConfigInfo.Auth0ConfigurationInfo.DBConnectionName
         };
 
         var managementApiToken = await _tokenHelper.GetAuth0ManagementApiTokenAsync();

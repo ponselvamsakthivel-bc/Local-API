@@ -2,6 +2,6 @@
 applications:
 - name: dev-ccs-sso
   instances: 1
-  memory: 50M
+  memory: 512M
   buildpack: https://github.com/cloudfoundry/staticfile-buildpack
-  random-route: true
+  random-route: false

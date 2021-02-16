@@ -1,0 +1,11 @@
+---
+applications:
+- name: sand-api-security
+  instances: 1
+  memory: 512M
+  path: api/SecurityApi/CcsSso.Security.Api/bin/Debug/net5.0
+  buildpack: https://github.com/cloudfoundry/dotnet-core-buildpack.git
+  routes:
+  - route: sand-api-security.london.cloudapps.digital 
+  env:
+    CACHE_NUGET_PACKAGES: false   

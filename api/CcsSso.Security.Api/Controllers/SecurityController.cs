@@ -309,8 +309,8 @@ namespace CcsSso.Security.Api.Controllers
     /// </remarks>
     [HttpGet("security/logout")]
     [SwaggerOperation(Tags = new[] { "security" })]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
+    [ProducesResponseType(302)]
+    [ProducesResponseType(401)]
     public async Task<IActionResult> LogOut(string redirecturi)
     {
       var url = await _securityService.LogoutAsync(redirecturi);

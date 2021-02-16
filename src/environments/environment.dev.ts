@@ -13,7 +13,7 @@ export const environment = {
       cii: 'https://conclave-cii-integration-brash-shark-mk.london.cloudapps.digital'
     },
     web: {
-      dashboard: 'http://localhost:4200'
+      dashboard: 'https://dev-ccs-sso.london.cloudapps.digital'
     }
   },
   token: {
