@@ -1,14 +1,14 @@
 ---
 applications:
-- name: dev-api-contact
+- name: dev-api-security
   instances: 1
   memory: 512M
-  path: api/CcsSso.Core.ExternalApi/bin/Debug/net5.0
+  path: api/CcsSso.Security.Api/bin/Debug/net5.0
   buildpack: https://github.com/cloudfoundry/dotnet-core-buildpack.git
   routes:
-  - route: dev-api-contact.london.cloudapps.digital 
+    - route: dev-api-security.london.cloudapps.digital
   services:
     - dev2-sso-pg-service
-    - dev-vault
+    - dev-vault    
   env:
-    CACHE_NUGET_PACKAGES: false   
+    CACHE_NUGET_PACKAGES: false
