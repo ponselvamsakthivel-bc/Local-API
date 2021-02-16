@@ -10,7 +10,7 @@ deploy:
     password: $password
     api: $api
     organization: $organisation
-    space: $space_sandbox
+    space: $space_dev
     manifest: ./manifest.yml
     skip-cleanup: true
     repo: Crown-Commercial-Service/conclave-ssso
