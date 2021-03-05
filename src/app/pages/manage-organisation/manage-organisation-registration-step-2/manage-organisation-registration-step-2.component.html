@@ -1,0 +1,15 @@
+<!--<app-sidenav [collapsed]="sideNavVisible$ | async"></app-sidenav>-->
+<div class="content flex">
+  <h1>Enter your organisation's details</h1>
+  <h2>We need to verify your organisation to make sure your account is secure</h2>
+  <p>Please choose one option to complete your verification:</p>
+  <div class="brickendon-group" *ngFor="let item of items$! | async">
+    <div><input type="radio" name="scheme" value="{{ item.scheme }}" checked="checked" [(ngModel)]="scheme" (click)="onSelect(item)"><label (click)="onSelect(item)">{{ item.schemeName }}</label></div>
+    <div *ngIf="scheme === item.scheme" style="height: 70px; border-left: 2px solid #8F8F8F; padding-left: 5px; margin-left: 1px;">
+      <label style="padding-bottom: 5px; display: block; padding-top: 8px;">Enter your {{ item.schemeName }} number</label>
+      <input type="text" [(ngModel)]="txtValue" style="margin-left: 10px;" />
+    </div>
+  </div>
+  <button style="background: rgba(11, 130, 139, 1);" (click)="onSubmit()">Continue</button>
+  <!--<app-footer></app-footer>-->
+</div>

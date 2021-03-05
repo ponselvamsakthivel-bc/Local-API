@@ -1,0 +1,44 @@
+<div class="content flex" [@slide]="(sideNavVisible$ | async) ? 'close' : 'open'">
+    <h1 *ngIf="contactId == 0">Add another contact</h1>
+    <h1 *ngIf="contactId != 0">Edit organisation contact details</h1>
+
+    <div class="form contact-form">
+        <form class="ui form login mb-two" [class.error]="!formValid(contactForm)" (submit)="onSubmit(contactForm)"
+            [formGroup]="contactForm">
+            <div class="ui segment">
+                <div
+                    [class.invalid]="contactForm.controls.name.invalid && (submitted || contactForm.controls.name.touched)">
+                    <label>Contact name</label><br>
+                    <input name="name" type="text" formControlName="name" class="mb-half">
+                    <small style="color:red;"
+                        *ngIf="contactForm.controls.name.invalid && (submitted || contactForm.controls.name.touched)">
+                        Please enter a contact person name.</small>
+                </div>
+                <br>
+                <div
+                    [class.invalid]="contactForm.controls.email.invalid && (submitted || contactForm.controls.email.touched)">
+                    <label>Email address</label><br>
+                    <input name="email" type="email" formControlName="email" class="mb-half">
+                    <small style="color:red;"
+                        *ngIf="(contactForm.controls.email.invalid && contactForm.controls['email'].hasError('required')) && (submitted || contactForm.controls.email.touched )">
+                        Please enter a email address.</small>
+                    <small style="color:red;"
+                        *ngIf="(contactForm.controls.email.invalid && contactForm.controls['email'].hasError('email')) && (submitted || contactForm.controls.email.touched )">
+                        Please enter a valid email address.</small>
+                </div>
+                <br>
+                <div
+                    [class.invalid]="contactForm.controls.phone.invalid && (submitted || contactForm.controls.phone.touched)">
+                    <label>Telephone number</label><br>
+                    <input name="phone" type="text" formControlName="phone" class="mb-one">
+                    <small style="color:red;"
+                        *ngIf="contactForm.controls.phone.invalid && (submitted || contactForm.controls.phone.touched)">
+                        Please enter a phone number.</small>
+                </div>
+                <button type="submit" class="secondary-button save-button mb-one">Save changes</button>
+                <button type="button" class="secondary-button cancel-button" (click)="onCancelClick()">Cancel</button>
+            </div>
+        </form>
+    </div>
+    <div class="delete-link"><a *ngIf="contactId != 0" (click)="onDeleteClick($event)">Delete details</a></div>
+</div>

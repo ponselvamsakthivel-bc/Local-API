@@ -1,0 +1,52 @@
+<!--<app-sidenav [collapsed]="sideNavVisible$ | async"></app-sidenav>-->
+<div class="content flex">
+  <h1>Enter your admin account details</h1>
+  <h2>As you are registering your organisation you will be the admin for your organisations account</h2>
+  <form [class.error]="!formValid(formGroup)" [formGroup]="formGroup">
+    <div class="validation-message" *ngIf="!formValid(formGroup) && submitted">
+      <ul style="list-style-type: none;color:red;">
+        <li *ngIf="formGroup.controls['firstName'].hasError('required')">Please enter your first name.</li>
+        <li *ngIf="formGroup.controls['lastName'].hasError('required')">Please enter your last name.</li>
+        <!--<li *ngIf="formGroup.controls['userName'].hasError('required')">Please enter your username.</li>-->
+        <li *ngIf="formGroup.controls['email'].hasError('required')">Please enter your email address.</li>
+        <li *ngIf="formGroup.controls['email'].hasError('pattern')">Please enter a valid email address.</li>
+        <li *ngIf="formGroup.controls['email'].hasError('invalidEmailAddress')">Please enter a valid email address.</li>
+        <li *ngIf="formGroup.controls['ccsEmails'].hasError('pattern')">Please enter a valid ccs email address.</li>
+      </ul>
+    </div>
+    <div style="padding-bottom:15px;" [class.invalid]="submitted && formGroup.controls.title.invalid && formGroup.controls.title.touched">
+      <label>Title</label><br>
+      <select name="title" formControlName="title">
+        <option value="Mr">Mr</option>
+        <option value="Mrs">Mrs</option>
+        <option value="Miss">Miss</option>
+        <option value="Ms">Ms</option>
+        <option value="Doctor">Doctor</option>
+        <!-- <option *ngFor="let t of titles" [ngValue]="t">{{t.name}}</option> -->
+      </select>
+    </div>
+    <div style="padding-bottom:15px;" [class.invalid]="submitted && formGroup.controls.firstName.invalid && formGroup.controls.firstName.touched">
+      <label>{{ 'FIRSTNAME' | translate }}</label><br>
+      <input name="firstName" type="text" formControlName="firstName">
+    </div>
+    <div style="padding-bottom:15px;" [class.invalid]="submitted && formGroup.controls.lastName.invalid && formGroup.controls.lastName.touched">
+      <label>{{ 'LASTNAME' | translate }}</label><br>
+      <input name="lastName" type="text" formControlName="lastName">
+    </div>
+    <!--<div style="padding-bottom:15px;" [class.invalid]="submitted && formGroup.controls.userName.invalid && formGroup.controls.userName.touched">
+    <label>{{ 'USERNAME' | translate }}</label><br>
+    <input name="userName" type="text" formControlName="userName">
+  </div>-->
+    <div style="padding-bottom:40px;" [class.invalid]="submitted && formGroup.controls.email.invalid && formGroup.controls.email.touched">
+      <label>{{ 'EMAIL' | translate }}</label><br>
+      <input name="email" type="email" formControlName="email">
+    </div>
+    <!--<div style="padding-bottom:40px;" [class.invalid]="submitted && formGroup.controls.ccsEmails.invalid && formGroup.controls.ccsEmails.touched">
+      <label>{{ 'CSS_EMAILS' | translate }}</label><br>
+      <div>Separate emails with a semicolon (;)</div>
+      <input name="ccsEmails" type="email" formControlName="ccsEmails">
+    </div>-->
+    <button style="background: rgba(11, 130, 139, 1);" (click)="onSubmit(formGroup)">Continue</button>
+  </form>
+  <!--<app-footer></app-footer>-->
+</div>
