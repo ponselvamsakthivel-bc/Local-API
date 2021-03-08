@@ -38,10 +38,10 @@ export class ManageOrgRegAddUserComponent extends BaseComponent implements OnIni
   constructor(private formBuilder: FormBuilder, private translateService: TranslateService, private authService: AuthService, private ciiService: ciiService, private userService: UserService, private organisationService: OrganisationService, private contactService: contactService, private router: Router, private route: ActivatedRoute, protected uiStore: Store<UIState>) {
     super(uiStore);
     this.formGroup = this.formBuilder.group({
-      firstName: ['', Validators.compose([Validators.required])],
-      lastName: ['', Validators.compose([Validators.required])],
+      firstName: [localStorage.getItem("new_user_firstName"), Validators.compose([Validators.required])],
+      lastName: [localStorage.getItem("new_user_lastName"), Validators.compose([Validators.required])],
       // userName: ['', Validators.compose([Validators.required])],
-      email: ['', Validators.compose([Validators.required, Validators.email])],
+      email: [localStorage.getItem("new_user_email"), Validators.compose([Validators.required, Validators.email])],
       title: ['Mr', Validators.compose([Validators.required])],
       ccsEmails: ['', Validators.compose([Validators.email])]
     });
@@ -56,9 +56,15 @@ export class ManageOrgRegAddUserComponent extends BaseComponent implements OnIni
     if (this.formValid(form)) {
       this.userService.getUser(form.get('email')?.value).toPromise().then((resp: any) => {
         // this.router.navigateByUrl(`manage-org/register/error/reg-id-exists`);
+        localStorage.setItem("new_user_firstName", form.get('firstName')?.value);
+        localStorage.setItem("new_user_lastName", form.get('lastName')?.value);
+        localStorage.setItem("new_user_email", form.get('email')?.value);
         window.location.href = '/manage-org/register/error/username';
       }, (error: any) => {
         console.log(error);
+        localStorage.removeItem("new_user_firstName");
+        localStorage.removeItem("new_user_lastName");
+        localStorage.removeItem("new_user_email");
         // if (error.status === 404) {
         //   this.router.navigateByUrl(`manage-org/register/error/reg-id-exists`);
         // }
@@ -77,7 +83,7 @@ export class ManageOrgRegAddUserComponent extends BaseComponent implements OnIni
             }
             const org = JSON.parse(organisation ? organisation : '');
             if (org) {
-              org.ccsOrgId = result.response[0].ccsOrgId;
+              org.ccsOrgId = result.response.ccsOrgId;
               localStorage.setItem('ccs_organisation_id', JSON.stringify(org.ccsOrgId));
               this.organisationService.add(org).toPromise().then((orgResponse) => {
                 console.log(orgResponse);
@@ -89,7 +95,7 @@ export class ManageOrgRegAddUserComponent extends BaseComponent implements OnIni
                   title: form.get('title')?.value,
                   orgId: JSON.stringify(orgResponse),
                 };
-                if (org.contactPoint) {
+                if (org.contactPoint.email.length > 0 || org.contactPoint.name.length > 0 || org.contactPoint.faxNumber.length > 0 || org.contactPoint.telephone.length > 0  || org.contactPoint.uri.length > 0) {
                   const physicalContact = {
                     address: org.address,
                     contactType: ContactType.Organisation,
@@ -130,12 +136,12 @@ export class ManageOrgRegAddUserComponent extends BaseComponent implements OnIni
                     this.router.navigateByUrl(`manage-org/register/confirm`);
                   }, (err) => {
                     console.log(err);
-                    this.router.navigateByUrl(`manage-org/register/error`);
+                    this.router.navigateByUrl(`manage-org/register/error/generic`);
                   });
                 });
               }, (err) => {
                 console.log(err);
-                this.router.navigateByUrl(`manage-org/register/error`);
+                this.router.navigateByUrl(`manage-org/register/error/generic`);
               });
             }
           },

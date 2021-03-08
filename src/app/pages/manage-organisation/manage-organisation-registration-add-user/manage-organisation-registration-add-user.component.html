@@ -3,13 +3,13 @@
   <h1>Enter your admin account details</h1>
   <h2>As you are registering your organisation you will be the admin for your organisations account</h2>
   <form [class.error]="!formValid(formGroup)" [formGroup]="formGroup">
-    <div class="validation-message" *ngIf="!formValid(formGroup) && submitted">
+    <div class="validation-message" *ngIf="formValid(formGroup) == false && submitted">
       <ul style="list-style-type: none;color:red;">
         <li *ngIf="formGroup.controls['firstName'].hasError('required')">Please enter your first name.</li>
         <li *ngIf="formGroup.controls['lastName'].hasError('required')">Please enter your last name.</li>
         <!--<li *ngIf="formGroup.controls['userName'].hasError('required')">Please enter your username.</li>-->
         <li *ngIf="formGroup.controls['email'].hasError('required')">Please enter your email address.</li>
-        <li *ngIf="formGroup.controls['email'].hasError('pattern')">Please enter a valid email address.</li>
+        <li *ngIf="formGroup.controls['email'].hasError('email')">Please enter a valid email address.</li>
         <li *ngIf="formGroup.controls['email'].hasError('invalidEmailAddress')">Please enter a valid email address.</li>
         <li *ngIf="formGroup.controls['ccsEmails'].hasError('pattern')">Please enter a valid ccs email address.</li>
       </ul>

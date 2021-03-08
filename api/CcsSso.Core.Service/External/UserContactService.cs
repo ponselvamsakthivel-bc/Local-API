@@ -209,8 +209,7 @@ namespace CcsSso.Service.External
 
       // Get the user's contact points with party type USER
       var userContactPoints = await _dataContext.ContactPoint
-        .Where(c => !c.IsDeleted && !c.ContactDetail.IsDeleted && c.Party.User.UserName == userName && c.PartyType.PartyTypeName == PartyTypeName.User &&
-          (contactType == null || c.ContactPointReason.Name == contactType))
+        .Where(c => !c.IsDeleted && !c.ContactDetail.IsDeleted && c.Party.User.UserName == userName && c.PartyType.PartyTypeName == PartyTypeName.User)
         .ToListAsync();
 
       if (userContactPoints.Any())
@@ -219,7 +218,8 @@ namespace CcsSso.Service.External
 
         // Get the contact details information for the user's contact points by filtering party type NON_USER
         var contacts = await _dataContext.ContactPoint
-        .Where(c => !c.IsDeleted && userContactDetailsIds.Contains(c.ContactDetailId) && c.PartyType.PartyTypeName == PartyTypeName.NonUser)
+        .Where(c => !c.IsDeleted && userContactDetailsIds.Contains(c.ContactDetailId) && c.PartyType.PartyTypeName == PartyTypeName.NonUser &&
+          (contactType == null || c.ContactPointReason.Name == contactType))
         .Include(c => c.Party.Person).ThenInclude(p => p.Organisation)
         .Include(c => c.ContactPointReason)
         .Include(c => c.ContactDetail.VirtualAddresses)
@@ -306,7 +306,7 @@ namespace CcsSso.Service.External
 
     private void ValidateUserName(string userName)
     {
-      if (string.IsNullOrWhiteSpace(userName) && !UtilitiesHelper.IsEmailValid(userName))
+      if (string.IsNullOrWhiteSpace(userName) || !UtilitiesHelper.IsEmailValid(userName))
       {
         throw new CcsSsoException(ErrorConstant.ErrorInvalidUserID);
       }

@@ -173,7 +173,7 @@ namespace CcsSso.Core.Service.External
 
     public async Task<OrganisationSiteContactInfoList> GetOrganisationSiteContactsListAsync(string ciiOrganisationId, int siteId, string contactType = null)
     {
-      // Site contact
+      // The actual site which is also a contact point
       var siteContactPoint = await _dataContext.ContactPoint
         .Include(c => c.SiteContacts)
         .FirstOrDefaultAsync(c => !c.IsDeleted && c.Id == siteId && c.Party.Organisation.CiiOrganisationId == ciiOrganisationId);
@@ -194,7 +194,8 @@ namespace CcsSso.Core.Service.External
         .Include(c => c.Party).ThenInclude(p => p.Person)
         .Include(c => c.ContactPointReason)
         .Include(c => c.ContactDetail.VirtualAddresses)
-        .Where(cp => sitePersonContactPointIds.Contains(cp.Id) && !cp.IsDeleted)
+        .Where(cp => sitePersonContactPointIds.Contains(cp.Id) && !cp.IsDeleted &&
+          (contactType == null || cp.ContactPointReason.Name == contactType))
         .ToListAsync();
 
       var virtualContactTypes = await _dataContext.VirtualAddressType.ToListAsync();

@@ -449,9 +449,9 @@ namespace CcsSso.ExternalApi.Controllers
     [HttpGet("{organisationId}/site/{siteId}/contact")]
     [SwaggerOperation(Tags = new[] { "Organisation site contact" })]
     [ProducesResponseType(typeof(OrganisationSiteContactInfoList), 200)]
-    public async Task<OrganisationSiteContactInfoList> GetOrganisationSiteContactsList(string organisationId, int siteId)
+    public async Task<OrganisationSiteContactInfoList> GetOrganisationSiteContactsList(string organisationId, int siteId, string contactType)
     {
-      return await _siteContactService.GetOrganisationSiteContactsListAsync(organisationId, siteId);
+      return await _siteContactService.GetOrganisationSiteContactsListAsync(organisationId, siteId, contactType);
     }
 
     /// <summary>

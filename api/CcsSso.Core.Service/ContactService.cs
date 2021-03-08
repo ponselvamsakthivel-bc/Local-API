@@ -435,10 +435,10 @@ namespace CcsSso.Service
     {
       List<VirtualAddress> virtualAddresses = await GetVirtualAddressesAsync(contactDetailsDto);
 
-      if (!virtualAddresses.Any() && contactDetailsDto.Address == null)
-      {
-        throw new CcsSsoException(ErrorConstant.ErrorInvalidContacts);
-      }
+      //if (!virtualAddresses.Any() && contactDetailsDto.Address == null)
+      //{
+      //  throw new CcsSsoException(ErrorConstant.ErrorInvalidContacts);
+      //}
 
       if (virtualAddresses.Any())
       {
