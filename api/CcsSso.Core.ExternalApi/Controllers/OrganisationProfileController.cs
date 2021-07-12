@@ -1,10 +1,12 @@
 using CcsSso.Core.Domain.Contracts.External;
 using CcsSso.Core.Domain.Dtos.External;
+using CcsSso.Domain.Constants;
 using CcsSso.Domain.Contracts.External;
 using CcsSso.Domain.Dtos.External;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CcsSso.ExternalApi.Controllers
@@ -144,6 +146,69 @@ namespace CcsSso.ExternalApi.Controllers
     #region Organisation Contacts
 
     /// <summary>
+    /// Allows a user to assign user/site contacts for an organisation
+    /// </summary>
+    /// <response  code="200">Ok. Return assigned site contact ids</response>
+    /// <response  code="401">Unauthorised</response>
+    /// <response  code="404">Not found</response>
+    /// <response  code="400">Bad request.
+    /// Error Codes: ERROR_INVALID_ASSIGNING_CONTACT_POINT_IDS, ERROR_INVALID_CONTACT_ASSIGNEMNT_TYPE, ERROR_INVALID_USER_ID_FOR_CONTACT_ASSIGNEMNT,
+    /// ERROR_INVALID_SITE_ID_FOR_CONTACT_ASSIGNEMNT, ERROR_DUPLICATE_CONTACT_ASSIGNMENT
+    /// </response>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     POST /organisations/1/contacts/assign
+    ///     {
+    ///        "AssigningContactType": 1, (User:1, Site:2)
+    ///        "AssigningContactPointIds": [1, 2],
+    ///        "AssigningContactsUserId": "user@mail.com"
+    ///     }
+    ///
+    ///     POST /organisations/1/contacts/assign
+    ///     {
+    ///        "AssigningContactType": 2, (User:1, Site:2)
+    ///        "AssigningContactPointIds": [1, 2],
+    ///        "AssigningContactsSiteId": 1
+    ///     }
+    ///     
+    ///
+    /// </remarks>s
+    [HttpPost("{organisationId}/contacts/assign")]
+    [SwaggerOperation(Tags = new[] { "Organisation contact" })]
+    [ProducesResponseType(typeof(List<int>), 200)]
+    public async Task<List<int>> AssignContactsToOrganisationSite(string organisationId, ContactAssignmentInfo contactAssignmentInfo)
+    {
+      return await _contactService.AssignContactsToOrganisationAsync(organisationId, contactAssignmentInfo);
+    }
+
+
+    /// <summary>
+    /// Allows a user to unassign contacts from an organisation.
+    /// Should provide the assigned contacts contactpoint ids as a query parameter list
+    /// </summary>
+    /// <response  code="200">Ok</response>
+    /// <response  code="401">Unauthorised</response>
+    /// <response  code="404">Not found</response>
+    /// <response  code="400">Bad request.
+    /// Error Codes: ERROR_INVALID_UNASSIGNING_CONTACT_POINT_IDS
+    /// </response>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     POST /organisations/1/contacts/unassign?contactPointIds=2
+    ///     
+    ///
+    /// </remarks>s
+    [HttpPost("{organisationId}/contacts/unassign")]
+    [SwaggerOperation(Tags = new[] { "Organisation contact" })]
+    [ProducesResponseType(typeof(void), 200)]
+    public async Task UnAssignContactsFromOrganisationSite(string organisationId, [FromQuery] List<int> contactPointIds)
+    {
+      await _contactService.UnassignOrganisationContactsAsync(organisationId, contactPointIds);
+    }
+
+    /// <summary>
     /// Allows a user to create organisation contact
     /// </summary>
     /// <response  code="200">Ok. Return created contact id</response>
@@ -206,9 +271,9 @@ namespace CcsSso.ExternalApi.Controllers
     [HttpGet("{organisationId}/contacts")]
     [SwaggerOperation(Tags = new[] { "Organisation contact" })]
     [ProducesResponseType(typeof(OrganisationContactInfoList), 200)]
-    public async Task<OrganisationContactInfoList> GetOrganisationContactsList(string organisationId, [FromQuery] string contactType)
+    public async Task<OrganisationContactInfoList> GetOrganisationContactsList(string organisationId, string contactType, ContactAssignedStatus contactAssignedStatus = ContactAssignedStatus.All)
     {
-      return await _contactService.GetOrganisationContactsListAsync(organisationId, contactType);
+      return await _contactService.GetOrganisationContactsListAsync(organisationId, contactType, contactAssignedStatus);
     }
 
     /// <summary>
@@ -346,15 +411,15 @@ namespace CcsSso.ExternalApi.Controllers
     /// <remarks>
     /// Sample request:
     ///
-    ///     GET /organisations/1/site
+    ///     GET /organisations/1/site?searchString=sitename
     ///
     /// </remarks>
     [HttpGet("{organisationId}/sites")]
     [SwaggerOperation(Tags = new[] { "Organisation site" })]
     [ProducesResponseType(typeof(OrganisationSiteInfoList), 200)]
-    public async Task<OrganisationSiteInfoList> GetOrganisationSite(string organisationId)
+    public async Task<OrganisationSiteInfoList> GetOrganisationSites(string organisationId, string searchString = null)
     {
-      return await _siteService.GetOrganisationSitesAsync(organisationId);
+      return await _siteService.GetOrganisationSitesAsync(organisationId, searchString);
     }
 
     /// <summary>
@@ -437,6 +502,61 @@ namespace CcsSso.ExternalApi.Controllers
     #region Organisation Site Contacts
 
     /// <summary>
+    /// Allows a user to assign user contacts for an organisation site
+    /// </summary>
+    /// <response  code="200">Ok. Return assigned site contact ids</response>
+    /// <response  code="401">Unauthorised</response>
+    /// <response  code="404">Not found</response>
+    /// <response  code="400">Bad request.
+    /// Error Codes: ERROR_INVALID_ASSIGNING_CONTACT_POINT_IDS, ERROR_INVALID_CONTACT_ASSIGNEMNT_TYPE, ERROR_INVALID_USER_ID_FOR_CONTACT_ASSIGNEMNT, ERROR_DUPLICATE_CONTACT_ASSIGNMENT
+    /// </response>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     POST /organisations/1/sites/1/contacts/assign
+    ///     {
+    ///        "AssigningContactType": 1, (User:1, Site:2 Only user contacts are valid here)
+    ///        "AssigningContactPointIds": [1, 2],
+    ///        "AssigningContactsUserId": "user@mail.com"
+    ///     }
+    ///     
+    ///
+    /// </remarks>s
+    [HttpPost("{organisationId}/sites/{siteId}/contacts/assign")]
+    [SwaggerOperation(Tags = new[] { "Organisation site contact" })]
+    [ProducesResponseType(typeof(List<int>), 200)]
+    public async Task<List<int>> AssignContactsToOrganisationSite(string organisationId, int siteId, ContactAssignmentInfo contactAssignmentInfo)
+    {
+      return await _siteContactService.AssignContactsToSiteAsync(organisationId, siteId, contactAssignmentInfo);
+    }
+
+
+    /// <summary>
+    /// Allows a user to unassign contacts from an organisation site.
+    /// Should provide the assigned contacts contactpoint ids as a query parameter list
+    /// </summary>
+    /// <response  code="200">Ok</response>
+    /// <response  code="401">Unauthorised</response>
+    /// <response  code="404">Not found</response>
+    /// <response  code="400">Bad request.
+    /// Error Codes: ERROR_INVALID_UNASSIGNING_CONTACT_POINT_IDS
+    /// </response>
+    /// <remarks>
+    /// Sample request:
+    ///
+    ///     POST /organisations/1/sites/1/contacts/unassign?contactPointIds=2
+    ///     
+    ///
+    /// </remarks>s
+    [HttpPost("{organisationId}/sites/{siteId}/contacts/unassign")]
+    [SwaggerOperation(Tags = new[] { "Organisation site contact" })]
+    [ProducesResponseType(typeof(void), 200)]
+    public async Task UnAssignContactsFromOrganisationSite(string organisationId, int siteId, [FromQuery]List<int> contactPointIds)
+    {
+      await _siteContactService.UnassignSiteContactsAsync(organisationId, siteId, contactPointIds);
+    }
+
+    /// <summary>
     /// Allows a user to create organisation site contact
     /// </summary>
     /// <response  code="200">Ok. Return created site contact id</response>
@@ -499,9 +619,9 @@ namespace CcsSso.ExternalApi.Controllers
     [HttpGet("{organisationId}/sites/{siteId}/contacts")]
     [SwaggerOperation(Tags = new[] { "Organisation site contact" })]
     [ProducesResponseType(typeof(OrganisationSiteContactInfoList), 200)]
-    public async Task<OrganisationSiteContactInfoList> GetOrganisationSiteContactsList(string organisationId, int siteId, string contactType)
+    public async Task<OrganisationSiteContactInfoList> GetOrganisationSiteContactsList(string organisationId, int siteId, string contactType, ContactAssignedStatus contactAssignedStatus = ContactAssignedStatus.All)
     {
-      return await _siteContactService.GetOrganisationSiteContactsListAsync(organisationId, siteId, contactType);
+      return await _siteContactService.GetOrganisationSiteContactsListAsync(organisationId, siteId, contactType, contactAssignedStatus);
     }
 
     /// <summary>
@@ -612,7 +732,7 @@ namespace CcsSso.ExternalApi.Controllers
     [HttpGet("{organisationId}/user")]
     [SwaggerOperation(Tags = new[] { "Organisation User" })]
     [ProducesResponseType(typeof(UserListResponse), 200)]
-    public async Task<UserListResponse> GetUsers(string organisationId, [FromQuery] ResultSetCriteria resultSetCriteria, string searchString)
+    public async Task<UserListResponse> GetUsers(string organisationId, [FromQuery] ResultSetCriteria resultSetCriteria, string searchString, bool includeSelf = false)
     {
       resultSetCriteria ??= new ResultSetCriteria
       {
@@ -621,7 +741,7 @@ namespace CcsSso.ExternalApi.Controllers
       };
       resultSetCriteria.CurrentPage = resultSetCriteria.CurrentPage <= 0 ? 1 : resultSetCriteria.CurrentPage;
       resultSetCriteria.PageSize = resultSetCriteria.PageSize <= 0 ? 10 : resultSetCriteria.PageSize;
-      return await _userProfileService.GetUsersAsync(organisationId, resultSetCriteria, searchString);
+      return await _userProfileService.GetUsersAsync(organisationId, resultSetCriteria, searchString, includeSelf);
     }
     #endregion
 

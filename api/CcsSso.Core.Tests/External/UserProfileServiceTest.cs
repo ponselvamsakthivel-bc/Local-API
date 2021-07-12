@@ -10,6 +10,7 @@ using CcsSso.Domain.Constants;
 using CcsSso.Domain.Contracts;
 using CcsSso.Domain.Dtos;
 using CcsSso.Domain.Exceptions;
+using CcsSso.Shared.Cache.Contracts;
 using CcsSso.Shared.Domain.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -818,9 +819,10 @@ namespace CcsSso.Core.Tests.External
       Mock<IAdaptorNotificationService> mockAdapterNotificationService = new Mock<IAdaptorNotificationService>();
       var mockWrapperCacheService = new Mock<IWrapperCacheService>();
       var mockAuditLoginService = new Mock<IAuditLoginService>();
+      var mockRemoteCacheService = new Mock<IRemoteCacheService>();
 
       var service = new UserProfileService(dataContext, userProfileHelperService, requestContext, mockIdamService.Object,
-        mockEmailService.Object, mockAdapterNotificationService.Object, mockWrapperCacheService.Object, mockAuditLoginService.Object);
+        mockEmailService.Object, mockAdapterNotificationService.Object, mockWrapperCacheService.Object, mockAuditLoginService.Object, mockRemoteCacheService.Object);
       return service;
     }
 

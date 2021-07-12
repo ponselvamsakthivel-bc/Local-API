@@ -310,20 +310,25 @@ namespace CcsSso.Core.Service.External
 
     public async Task<List<OrganisationRole>> GetOrganisationRolesAsync(string ciiOrganisationId)
     {
-      var organisation = await _dataContext.Organisation
+      // Read org table to find the Org and then include all roles (FirstOrDefaultAsync get the Org)
+      var orgEligibleRoles = await _dataContext.Organisation
        .Include(o => o.OrganisationEligibleRoles).ThenInclude(or => or.CcsAccessRole)
-       .FirstOrDefaultAsync(o => !o.IsDeleted && o.CiiOrganisationId == ciiOrganisationId);
+        .ThenInclude(or => or.ServiceRolePermissions).ThenInclude(sr => sr.ServicePermission).ThenInclude(sr => sr.CcsService)
+        .Where(o => !o.IsDeleted && o.CiiOrganisationId == ciiOrganisationId)
+        .Select(o => o.OrganisationEligibleRoles)
+       .FirstOrDefaultAsync();
 
-      if (organisation == null)
+      if (orgEligibleRoles == null)
       {
         throw new ResourceNotFoundException();
       }
 
-      var roles = organisation.OrganisationEligibleRoles.Where(x => !x.IsDeleted)
+      var roles = orgEligibleRoles.Where(x => !x.IsDeleted)
         .OrderBy(r => r.CcsAccessRoleId).Select(or => new OrganisationRole
         {
           RoleId = or.Id,
           RoleName = or.CcsAccessRole.CcsAccessRoleName,
+          ServiceName = or.CcsAccessRole?.ServiceRolePermissions?.FirstOrDefault()?.ServicePermission.CcsService.ServiceName,
           OrgTypeEligibility = or.CcsAccessRole.OrgTypeEligibility,
           SubscriptionTypeEligibility = or.CcsAccessRole.SubscriptionTypeEligibility,
           TradeEligibility = or.CcsAccessRole.TradeEligibility
@@ -609,7 +614,7 @@ namespace CcsSso.Core.Service.External
         if (!string.IsNullOrWhiteSpace(organisationProfileInfo.Address.CountryCode) && !CultureSupport.IsValidCountryCode(organisationProfileInfo.Address.CountryCode))
         {
           throw new CcsSsoException(ErrorConstant.ErrorInvalidCountryCode);
-        } 
+        }
       }
     }
 

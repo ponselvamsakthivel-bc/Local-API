@@ -18,7 +18,7 @@ namespace CcsSso.Security.Services
 
     public async Task<UserRegisterResult> CreateUserAsync(UserInfo userInfo)
     {
-      userInfo.Email = userInfo.Email.ToLower();
+      userInfo.Email = userInfo.Email?.ToLower();
       ValidateUser(userInfo);
       return await _identityProviderService.CreateUserAsync(userInfo);
     }
@@ -59,6 +59,11 @@ namespace CcsSso.Security.Services
     public async Task DeleteUserAsync(string email)
     {
       await _identityProviderService.DeleteAsync(email);
+    }
+
+    public async Task UpdateUserMfaFlagAsync(UserInfo userInfo)
+    {
+      await _identityProviderService.UpdateUserMfaFlagAsync(userInfo);
     }
 
     public async Task NominateUserAsync(UserInfo userInfo)

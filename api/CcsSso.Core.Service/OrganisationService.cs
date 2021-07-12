@@ -191,6 +191,7 @@ namespace CcsSso.Service
           RightToBuy = organisation.RightToBuy,
           PartyId = organisation.PartyId,
           LegalName = organisation.LegalName,
+          SupplierBuyerType = organisation.SupplierBuyerType ?? 0
         };
         var contactPoint = await _dataContext.ContactPoint
           .Include(c => c.ContactDetail)
@@ -346,7 +347,8 @@ namespace CcsSso.Service
           var eligibleRole = new OrganisationEligibleRole
           {
             CcsAccessRole = role,
-            Organisation = org
+            Organisation = org,
+            MfaEnabled = role.MfaEnabled
           };
           eligibleRoles.Add(eligibleRole);
         });
@@ -363,7 +365,8 @@ namespace CcsSso.Service
           var eligibleRole = new OrganisationEligibleRole
           {
             CcsAccessRole = role,
-            Organisation = org
+            Organisation = org,
+            MfaEnabled = role.MfaEnabled
           };
           eligibleRoles.Add(eligibleRole);
         });
@@ -380,7 +383,8 @@ namespace CcsSso.Service
           var eligibleRole = new OrganisationEligibleRole
           {
             CcsAccessRole = role,
-            Organisation = org
+            Organisation = org,
+            MfaEnabled = role.MfaEnabled
           };
           eligibleRoles.Add(eligibleRole);
         });

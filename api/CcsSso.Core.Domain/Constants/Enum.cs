@@ -15,4 +15,11 @@ namespace CcsSso.Domain.Constants
     Ms,
     Doctor
   }
+
+  public enum ContactAssignedStatus
+  {
+    All,
+    Original,
+    Assigned
+  }
 }

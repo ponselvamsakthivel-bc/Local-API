@@ -258,7 +258,7 @@
                     data-app-pathinfo="/contact/sendToSalesforce" aria-hidden="false">
                     <ul class="nav-list nav-list--primary">
                         <li class="nav-list__item">
-                            <a class="nav-list__link">Help and support</a>
+                            <a class="nav-list__link" href="https://dev-ccs-sso.london.cloudapps.digital/help-support">Help and support</a>
                         </li>
                     </ul>
                 </nav>
@@ -365,10 +365,10 @@
 
                         <div class="align-right">
                             <h2 class="govuk-heading-ml">Problem signing in?</h2>
-                            <a style="margin-bottom: 15px;" class="govuk-link" href="http://dev-ccs-sso.london.cloudapps.digital/forgot-password">I have forgotten my
+                            <a style="margin-bottom: 15px;" class="govuk-link" href="https://dev-ccs-sso.london.cloudapps.digital/forgot-password">I have forgotten my
                                 password</a>
                             <br />
-                            <a class="govuk-link" href="#">Help and support for
+                            <a class="govuk-link" href="https://dev-ccs-sso.london.cloudapps.digital/help-support">Help and support for
                                 signing in </a>
                         </div>
                     </form>
@@ -615,14 +615,18 @@
             function login(e) {
                 e.preventDefault();
                 var button = this;
-                var username = document.getElementById('email').value;
-                var password = document.getElementById('password').value;
+				var userNameField = document.getElementById('email');
+                var username = userNameField.value;
+				var passwordField = document.getElementById('password');
+                var password = passwordField.value;
 
                 debugger;
                 let emailFG = document.getElementById('email-form-group');
                 let passwordFG = document.getElementById('password-form-group');
                 emailFG.classList.remove("invalid");
                 passwordFG.classList.remove("invalid");
+				userNameField.classList.remove("govuk-input--error");
+				passwordField.classList.remove("govuk-input--error");
 
                 let userNameEmpty = username === '';
                 let passwordEmpty = password === '';
@@ -631,10 +635,12 @@
 
                     if (userNameEmpty) {
                         emailFG.classList.add("invalid");
+						userNameField.classList.add("govuk-input--error");
                     }
 
                     if (passwordEmpty) {
                         passwordFG.classList.add("invalid");
+						passwordField.classList.add("govuk-input--error");
                     }
 
                     displayErrorSummary(userNameEmpty, passwordEmpty);
@@ -722,6 +728,10 @@
                     errorEmailSummary.style.display = 'block';
                     let emailFG = document.getElementById('email-form-group');
                     emailFG.classList.add("invalid");
+					var userNameField = document.getElementById('email');
+					userNameField.classList.remove("govuk-input--error");
+					userNameField.classList.add("govuk-input--error");
+					
                 }
             }
 

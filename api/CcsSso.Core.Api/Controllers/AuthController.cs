@@ -33,8 +33,8 @@ namespace CcsSso.Core.Api.Controllers
       }
     }
 
-    [HttpPost("save_refresh_token")]
-    public void SaveRefreshToken(TokenDetails tokenDetails)
+    [HttpPost("create_session")]
+    public void CreateSession(TokenDetails tokenDetails)
     {
       if (!string.IsNullOrEmpty(tokenDetails.RefreshToken))
       {
@@ -44,7 +44,7 @@ namespace CcsSso.Core.Api.Controllers
           Secure = true,
           HttpOnly = true
         };
-        string cookieName = "refreshToken";
+        string cookieName = "conclave";
         if (!Request.Cookies.ContainsKey(cookieName))
         {
           Response.Cookies.Append(cookieName, tokenDetails.RefreshToken, cookieOptions);
@@ -64,16 +64,16 @@ namespace CcsSso.Core.Api.Controllers
     [HttpPost("sign_out")]
     public void Signout()
     {
-      if (Request.Cookies.ContainsKey("refreshToken"))
+      if (Request.Cookies.ContainsKey("conclave"))
       {
-        Response.Cookies.Delete("refreshToken");
+        Response.Cookies.Delete("conclave");
       }
     }
 
     [HttpGet("get_refresh_token")]
     public string GetRefreshToken()
     {
-      string cookieName = "refreshToken";
+      string cookieName = "conclave";
       if (Request.Cookies.ContainsKey(cookieName))
       {
         Request.Cookies.TryGetValue(cookieName, out string refreshToken);

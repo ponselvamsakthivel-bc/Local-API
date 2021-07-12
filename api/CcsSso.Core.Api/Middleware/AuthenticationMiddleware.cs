@@ -1,5 +1,7 @@
 using CcsSso.Domain.Dtos;
+using CcsSso.Shared.Cache.Contracts;
 using CcsSso.Shared.Contracts;
+using CcsSso.Shared.Domain.Constants;
 using CcsSso.Shared.Domain.Contexts;
 using CcsSso.Shared.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -15,9 +17,10 @@ namespace CcsSso.Core.Api.Middleware
     private RequestDelegate _next;
     private readonly ITokenService _tokenService;
     private readonly ApplicationConfigurationInfo _applicationConfigurationInfo;
+    private readonly IRemoteCacheService _remoteCacheService;
     private List<string> allowedPaths = new List<string>()
     {
-      "auth/backchannel_logout", "auth/sign_out", "auth/get_refresh_token", "auth/save_refresh_token",
+      "auth/backchannel_logout", "auth/sign_out", "auth/get_refresh_token",
       "organisation/rollback", "organisation", "user", "user/useractivationemail", "user/getuser", "contact"
     };
     private const string allowedCiiRoute = "cii";
@@ -26,11 +29,13 @@ namespace CcsSso.Core.Api.Middleware
       "cii/DeleteScheme"
     };
 
-    public AuthenticationMiddleware(RequestDelegate next, ITokenService tokenService, ApplicationConfigurationInfo applicationConfigurationInfo)
+    public AuthenticationMiddleware(RequestDelegate next, ITokenService tokenService,
+      ApplicationConfigurationInfo applicationConfigurationInfo, IRemoteCacheService remoteCacheService)
     {
       _next = next;
       _tokenService = tokenService;
       _applicationConfigurationInfo = applicationConfigurationInfo;
+      _remoteCacheService = remoteCacheService;
     }
 
     public async Task Invoke(HttpContext context, RequestContext requestContext)
@@ -52,15 +57,26 @@ namespace CcsSso.Core.Api.Middleware
         {
           var token = bearerToken.Split(' ').Last();
           var result = await _tokenService.ValidateTokenAsync(token, _applicationConfigurationInfo.JwtTokenValidationInfo.JwksUrl,
-            _applicationConfigurationInfo.JwtTokenValidationInfo.IdamClienId, _applicationConfigurationInfo.JwtTokenValidationInfo.Issuer, new List<string>() { "uid", "ciiOrgId" });
+            _applicationConfigurationInfo.JwtTokenValidationInfo.IdamClienId, _applicationConfigurationInfo.JwtTokenValidationInfo.Issuer, new List<string>() { "uid", "ciiOrgId", "sub" });
 
           if (result.IsValid)
           {
             var userId = result.ClaimValues["uid"];
             var ciiOrgId = result.ClaimValues["ciiOrgId"];
+            var sub = result.ClaimValues["sub"];
+
+            var pendingChangePassword = await _remoteCacheService.GetValueAsync<bool>(CacheKeyConstant.ForceSignoutKey + sub);
+            if (path == "auth/create_session" && pendingChangePassword)
+            {
+              await _remoteCacheService.RemoveAsync(CacheKeyConstant.ForceSignoutKey + sub);
+            }
+            else if (pendingChangePassword) //check if user is entitled to force signout
+            {
+              throw new UnauthorizedAccessException();
+            }
+
             requestContext.UserId = int.Parse(userId);
             requestContext.CiiOrganisationId = ciiOrgId;
-
             await _next(context);
           }
           else

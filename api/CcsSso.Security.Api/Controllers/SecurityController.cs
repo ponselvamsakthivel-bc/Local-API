@@ -246,6 +246,15 @@ namespace CcsSso.Security.Api.Controllers
       await _userManagerService.UpdateUserAsync(userInfo);
     }
 
+    [HttpPost("security/updateuser_mfa")]
+    [SwaggerOperation(Tags = new[] { "security" })]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task UpdateUserMfaFlag(UserInfo userInfo)
+    {
+      await _userManagerService.UpdateUserMfaFlagAsync(userInfo);
+    }
+
     /// <summary>
     /// Change the old password to the new password
     /// </summary>
@@ -326,9 +335,9 @@ namespace CcsSso.Security.Api.Controllers
     [SwaggerOperation(Tags = new[] { "security" })]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task InitiateResetPassword([FromBody] string userName)
+    public async Task InitiateResetPassword(ChangePasswordInitiateRequest changePasswordInitiateRequest)
     {
-      await _securityService.InitiateResetPasswordAsync(userName);
+      await _securityService.InitiateResetPasswordAsync(changePasswordInitiateRequest);
     }
 
     /// <summary>

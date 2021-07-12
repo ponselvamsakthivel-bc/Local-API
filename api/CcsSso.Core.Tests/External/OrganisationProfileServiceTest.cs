@@ -348,7 +348,16 @@ namespace CcsSso.Core.Tests.External
     public static OrganisationProfileService OrganisationProfileService(IDataContext dataContext, Mock<ICiiService> mockCiiService = null,
       Mock<IOrganisationService> mockOrganisationHelperService = null)
     {
-      IContactsHelperService contactsHelperService = new ContactsHelperService(dataContext);
+      Mock<ILocalCacheService> mockLocalCacheService = new();
+      mockLocalCacheService.Setup(s => s.GetOrSetValueAsync<List<ContactPointReason>>("CONTACT_POINT_REASONS", It.IsAny<Func<Task<List<ContactPointReason>>>>(), It.IsAny<int>()))
+        .ReturnsAsync(new List<ContactPointReason> {
+          new ContactPointReason { Id = 1, Name = ContactReasonType.Other, Description = "Other" },
+          new ContactPointReason { Id = 2, Name = ContactReasonType.Shipping, Description = "Shipping" },
+          new ContactPointReason { Id = 3, Name = ContactReasonType.Site, Description = "Billing" },
+          new ContactPointReason { Id = 4, Name = ContactReasonType.Site, Description = "Site" },
+          new ContactPointReason { Id = 5, Name = ContactReasonType.Unspecified, Description = "Unspecified" }
+        });
+      IContactsHelperService contactsHelperService = new ContactsHelperService(dataContext, mockLocalCacheService.Object);
       Mock<ICcsSsoEmailService> mockCcsSsoEmailService = new Mock<ICcsSsoEmailService>();
       mockCiiService ??= new Mock<ICiiService>();
       mockOrganisationHelperService ??= new Mock<IOrganisationService>();
@@ -356,8 +365,7 @@ namespace CcsSso.Core.Tests.External
 
       mockOrganisationHelperService.Setup(s => s.GetOrganisationEligibleRolesAsync(It.IsAny<Organisation>(), It.IsAny<int>()))
         .ReturnsAsync(new List<OrganisationEligibleRole>());
-      var mockWrapperCacheService = new Mock<IWrapperCacheService>(); 
-      var mockLocalCacheService = new Mock<ILocalCacheService>();
+      var mockWrapperCacheService = new Mock<IWrapperCacheService>();
 
        var service = new OrganisationProfileService(dataContext, contactsHelperService, mockCcsSsoEmailService.Object,
         mockCiiService.Object, mockOrganisationHelperService.Object, mockAdapterNotificationService.Object, mockWrapperCacheService.Object, mockLocalCacheService.Object);
